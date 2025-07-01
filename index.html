@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Menu Free Fire</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: black;
+      overflow: hidden;
+      color: #fff;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+
+    .logo {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 0 10px red;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 20px;
+      background: rgba(0,0,0,0.7);
+      border: 1px solid red;
+      border-radius: 10px;
+      box-shadow: 0 0 20px red;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ff4444;
+      margin-bottom: 20px;
+    }
+
+    .toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 15px 0;
+      font-size: 18px;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #555;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: #00ff00;
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      color: #0f0;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+      z-index: 10;
+      box-shadow: 0 0 10px #0f0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Ảnh logo góc trái trên -->
+<img src="2B036A66-9DF4-4317-875C-537C47AAE6EC.jpeg" class="logo" alt="Logo của bạn" />
+
+<canvas id="bg"></canvas>
+
+<div class="container">
+  <h2>🌀FF 2.0 VIP</h2>
+
+  <div class="toggle"><label>AIMLOCK</label><label class="switch"><input type="checkbox" onchange="toggle(this, 'AIMLOCK')"><span class="slider round"></span></label></div>
+  <div class="toggle"><label>LOCK CỔ</label><label class="switch"><input type="checkbox" onchange="toggle(this, 'LOCK CỔ')"><span class="slider round"></span></label></div>
+  <div class="toggle"><label>NHẸ TÂM</label><label class="switch"><input type="checkbox" onchange="toggle(this, 'NHẸ TÂM')"><span class="slider round"></span></label></div>
+  <div class="toggle"><label>NHẠY TÂM</label><label class="switch"><input type="checkbox" onchange="toggle(this, 'NHẠY TÂM')"><span class="slider round"></span></label></div>
+  <div class="toggle"><label>FIX RUNG</label><label class="switch"><input type="checkbox" onchange="toggle(this, 'FIX RUNG')"><span class="slider round"></span></label></div>
+  <div class="toggle"><label>ĐẦM TÂM</label><label class="switch"><input type="checkbox" onchange="toggle(this, 'ĐẦM TÂM')"><span class="slider round"></span></label></div>
+  <div class="toggle"><label>AIM ẢO</label><label class="switch"><input type="checkbox" onchange="toggle(this, 'AIM ẢO')"><span class="slider round"></span></label></div>
+  <div class="toggle"><label>BUFF MÀN 70%</label><label class="switch"><input type="checkbox" onchange="toggle(this, 'BUFF MÀN 70%')"><span class="slider round"></span></label></div>
+  <div class="toggle"><label>FIX LAG 90%</label><label class="switch"><input type="checkbox" onchange="toggle(this, 'FIX LAG 90%')"><span class="slider round"></span></label></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function toggle(el, name) {
+    const toast = document.getElementById('toast');
+    toast.innerText = `${name} ${el.checked ? 'Đã bật ✅' : 'Đã tắt ❌'}`;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 1500);
+  }
+
+  // Vẽ nền chấm đỏ di chuyển
+  const canvas = document.getElementById("bg");
+  const ctx = canvas.getContext("2d");
+  let w = canvas.width = window.innerWidth;
+  let h = canvas.height = window.innerHeight;
+
+  let points = Array.from({length: 60}, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    dx: (Math.random() - 0.5) * 0.5,
+    dy: (Math.random() - 0.5) * 0.5
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < points.length; i++) {
+      let p = points[i];
+      p.x += p.dx;
+      p.y += p.dy;
+      if (p.x < 0 || p.x > w) p.dx *= -1;
+      if (p.y < 0 || p.y > h) p.dy *= -1;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = "#f00";
+      ctx.fill();
+
+      for (let j = i + 1; j < points.length; j++) {
+        let q = points[j];
+        let dist = Math.hypot(p.x - q.x, p.y - q.y);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = "rgba(255, 0, 0, 0.2)";
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  draw();
+</script>
+</body>
+</html>
